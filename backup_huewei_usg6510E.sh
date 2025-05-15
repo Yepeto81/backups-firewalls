@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Configuración básica
-ROUTER_IP="192.168.1.1"          # Cambiar por la IP real del router
-USER="admin"                     # Usuario SSH del router
-PASSWORD="tu_password"           # Contraseña SSH del router
+ROUTER_IP="192.168.128.1"          # Cambiar por la IP real del router
+USER="init"                     # Usuario SSH del router
+PASSWORD="Init2024colombino$"           # Contraseña SSH del router
 BACKUP_DIR="/backups/huawei"     # Directorio donde guardar los backups
 LOG_FILE="/var/log/huawei_backup.log"
 DATE=$(date +%Y%m%d-%H%M%S)
@@ -18,13 +18,17 @@ echo "Iniciando backup el $(date)" >> $LOG_FILE
 # Ejecutar comando de backup en el router
 sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 $USER@$ROUTER_IP << EOF >> $LOG_FILE 2>&1
 system-view
+<<<<<<< HEAD
 save /vrpcfg/$BACKUP_FILE
+=======
+save /$BACKUP_FILE
+>>>>>>> 7f060c4 (Resuelve conflictos de fusión)
 y
 quit
 EOF
 
 # Descargar el archivo de configuración
-sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no -o ConnectTimeout=10 $USER@$ROUTER_IP:/vrpcfg/$BACKUP_FILE $BACKUP_DIR/ >> $LOG_FILE 2>&1
+sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no -o ConnectTimeout=10 $USER@$ROUTER_IP:/$BACKUP_FILE $BACKUP_DIR/ >> $LOG_FILE 2>&1
 
 # Verificar si la transferencia fue exitosa
 if [ $? -eq 0 ]; then
