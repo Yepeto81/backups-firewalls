@@ -6,15 +6,13 @@
 # $ set ssh-public-key1 "ssh-rsa AAAAB3NzaC1yc2E...(tu clave pública completa)"
 # $ end
 
+# Cargar variables comunes y específicas del dispositivo
+source /var/common_vars.sh
+set_fortigate_vars
 
 # Configuración
-FORTIGATE_IP="10.161.69.201" 		# agregar la IP del forti
-FORTIGATE_USER="backups"		# usuario que realizara la tarea, previa creacion en el forti
 SSH_KEY="${HOME}/.ssh/id_rsa"		# llave privada, se debe setear la llave pub en el usuario del forti via cli 
-BACKUP_DIR="/tmp/fortigate_backups"	# Ruta donde se alojaran los backups
 SSH_PORT="22"				# Puerto de escucha de SSH del fortigate
-TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-BACKUP_FILE="${BACKUP_DIR}/config_${TIMESTAMP}.conf"
 
 # Crear directorio de backups si no existe
 mkdir -p "${BACKUP_DIR}"
