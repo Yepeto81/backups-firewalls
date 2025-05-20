@@ -1,45 +1,61 @@
 #!/bin/bash
 
-# Configuración básica
-ROUTER_IP="192.168.128.1"          # Cambiar por la IP real del router
-USER="init"                     # Usuario SSH del router
-PASSWORD="Init2024colombino$"           # Contraseña SSH del router
-BACKUP_DIR="/backups/huawei"     # Directorio donde guardar los backups
-LOG_FILE="/var/log/huawei_backup.log"
+# Configuración
+ROUTER_IP="192.168.128.1"
+USER="init"
+PASSWORD="Init2024colombino$"
+BACKUP_DIR="/tmp/huawei/"
+LOG_FILE="/tmp/huawei/huawei_backup.log"
 DATE=$(date +%Y%m%d-%H%M%S)
 BACKUP_FILE="backup-$DATE.cfg"
 
-# Crear directorio de backups si no existe
+
 mkdir -p $BACKUP_DIR
+echo "Iniciando backup el $(date)" | tee -a $LOG_FILE
 
-# Inicio del proceso
-echo "Iniciando backup el $(date)" >> $LOG_FILE
-
-# Ejecutar comando de backup en el router
-sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 $USER@$ROUTER_IP << EOF >> $LOG_FILE 2>&1
-system-view
-<<<<<<< HEAD
-save /vrpcfg/$BACKUP_FILE
-=======
+# ------------------------------------------------------------
+# Paso 1: Crear backup en el router
+# ------------------------------------------------------------
+echo "Ejecutando comando save en el router..." | tee -a $LOG_FILE
+sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no $USER@$ROUTER_IP << EOF >> $LOG_FILE 2>&1
 save /$BACKUP_FILE
->>>>>>> 7f060c4 (Resuelve conflictos de fusión)
 y
 quit
 EOF
 
-# Descargar el archivo de configuración
-sshpass -p "$PASSWORD" scp -o StrictHostKeyChecking=no -o ConnectTimeout=10 $USER@$ROUTER_IP:/$BACKUP_FILE $BACKUP_DIR/ >> $LOG_FILE 2>&1
+#debug_pause "Post-SSH (Creación backup)"
+#echo "Últimas líneas del log:" && tail -n 5 $LOG_FILE
 
-# Verificar si la transferencia fue exitosa
-if [ $? -eq 0 ]; then
-    echo "Backup exitoso: $BACKUP_DIR/$BACKUP_FILE" >> $LOG_FILE
-    
-    # Opcional: Eliminar el backup del router
-    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no $USER@$ROUTER_IP "rm /vrpcfg/$BACKUP_FILE" >> $LOG_FILE 2>&1
-else
-    echo "Error en la transferencia del backup" >> $LOG_FILE
-    exit 1
-fi
+# ------------------------------------------------------------
+# Paso 2: Esperar generación del archivo
+# ------------------------------------------------------------
+echo "Esperando 10 segundos..." | tee -a $LOG_FILE
+for i in {1..10}; do
+    echo -n "."
+    sleep 1
+done
+echo
 
-echo "Backup completado el $(date)" >> $LOG_FILE
-echo "----------------------------------------" >> $LOG_FILE
+# ------------------------------------------------------------
+# Paso 3: Descargar archivo
+# ------------------------------------------------------------
+echo "Iniciando descarga SFTP..." | tee -a $LOG_FILE
+sshpass -p "$PASSWORD" sftp -o StrictHostKeyChecking=no $USER@$ROUTER_IP:/$BACKUP_FILE $BACKUP_DIR/
+
+
+#debug_pause "Post-SFTP (Descarga)"
+echo "Contenido del directorio local:" && ls -lh $BACKUP_DIR | tee -a $LOG_FILE
+
+# ------------------------------------------------------------
+# Paso 4: Verificación y limpieza
+# ------------------------------------------------------------
+echo "limpieza de archivos en el rourter" | tee -a $LOG_FILE
+# Limpiar archivo en el router
+sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no $USER@$ROUTER_IP << EOF >> $LOG_FILE 2>&1
+delete /$BACKUP_FILE
+Y
+quit
+EOF
+
+
+
