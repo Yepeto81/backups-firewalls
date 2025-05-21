@@ -7,11 +7,11 @@ RUNDIR="$( cd "$( dirname "$0" )" && pwd )"
 ######### VARIABLES  #########
 
 # pfSense host O IP (nota: no incluir la / final, de otra manera el backup va a fallar)
-PFSENSE_HOST=https://192.168.0.1
+PFSENSE_HOST=https://XX.XX.XX.XX
 
 # login - password
-PFSENSE_USER=auto-backup
-PFSENSE_PASS=yhVlMnfNI4IR5G1IqppRag==
+PFSENSE_USER=backup
+PFSENSE_PASS=PASSWORD
 
 # Directorio donde se alojará el backup
 BACKUP_DIR="${RUNDIR}/conf_backup"

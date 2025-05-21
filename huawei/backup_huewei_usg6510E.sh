@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Configuración
-ROUTER_IP="192.168.128.1"
-USER="init"
-PASSWORD="Init2024colombino$"
+ROUTER_IP="XX.XX.XX.XX"
+USER="backup"
+PASSWORD="PASSWORD"
 BACKUP_DIR="/tmp/huawei/"
 LOG_FILE="/tmp/huawei/huawei_backup.log"
 DATE=$(date +%Y%m%d-%H%M%S)
@@ -56,6 +56,3 @@ delete /$BACKUP_FILE
 Y
 quit
 EOF
-
-
-

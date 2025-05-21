@@ -8,8 +8,8 @@
 
 
 # Configuración
-FORTIGATE_IP="10.161.69.201" 		# agregar la IP del forti
-FORTIGATE_USER="backups"		# usuario que realizara la tarea, previa creacion en el forti
+FORTIGATE_IP="XX.XX.XX.XX" 		# agregar la IP del forti
+FORTIGATE_USER="backup"		# usuario que realizara la tarea, previa creacion en el forti
 SSH_KEY="${HOME}/.ssh/id_rsa"		# llave privada, se debe setear la llave pub en el usuario del forti via cli 
 BACKUP_DIR="/tmp/fortigate_backups"	# Ruta donde se alojaran los backups
 SSH_PORT="22"				# Puerto de escucha de SSH del fortigate
